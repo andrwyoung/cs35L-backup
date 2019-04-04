@@ -1,0 +1,16 @@
+* timespec_cmp made sure it doesn't overflow
+by replacing it with code that doesn't subtract 
+
+
+--- lib/timespec.h	2005-09-21 23:05:39.000000000 -0700
++++ lib/timespec.h	2018-11-04 14:01:11.648427000 -0800
+@@ -45,8 +45,7 @@
+ static inline int
+ timespec_cmp (struct timespec a, struct timespec b)
+ {
+-  int diff = a.tv_sec - b.tv_sec;
+-  return diff ? diff : a.tv_nsec - b.tv_nsec;
++	return a.tv_nsec > b.tv_nsec ? 1 : a.tv_nsec < b.tv_nsec ? -1 : 0;
+ }
+ 
+ # if ! HAVE_DECL_NANOSLEEP

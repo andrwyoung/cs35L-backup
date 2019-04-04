@@ -1,0 +1,107 @@
+create this log
+$ touch lab2.log
+
+change locale because default was en_US.UTF-8
+$ export LC_ALL='C'
+
+then create the English dictionary
+$ sort -df /usr/share/dict/words > words
+using -d to only get alphabet characters and 
+using -f to sort capital letters too
+
+get the assignment page
+$ wget https://web.cs.ucla.edu/classes/fall18/cs35L/assign/assign2.html
+
+
+
+
+
+
+$ cat assign2.html | tr -c 'A-Za-z' '[\n*]' < assign.html
+replaced all letters not within A-Z or a-z 
+(since -c replaces the complement of things specified) 
+are replaced with newlines
+
+$ cat assign2.html | tr -cs 'A-Za-z' '[\n*]'
+same as last time, 
+except replaces whole sequences of letters with single newline 
+(since -s only replaces regions of replacement once)
+
+$ cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | sort 
+replaces letters and places newlines as with last command, 
+but then alphabetizes each line because of the sort command
+
+$ cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | sort -u
+same as last time, 
+but deletes any duplicate occurrences of a word (since -u deletes duplicates)
+
+$ cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | sort -u | comm - words
+replaces letters and places newlines in assign2.html, 
+then sorts it as with the last command, 
+but then compares it with the words file we created earlier. 
+This outputs 2 columns with the unique words in each file 
+and a third column that shows what words both these files have in common
+
+$ cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | sort -u | comm -- words
+similar to last command, 
+but only outputs the column with the unique words in the first file
+
+
+
+
+
+starting the Hawaiian dictionary
+$ wget http://mauimapp.com/moolelo/hwnwdseng.htm
+
+since the words would be in the format 
+"<tr> <td>Eword</td> <td>Hword</td>," 
+we can reliably take all the phrases between <td> and </td> 
+and just take every other phrase to get the Hawaiian word. 
+then remove all the html tags (including <u> and </u>)
+then removed spaces, treating them as seperate words
+replaced ` with '
+changed uppercase to lowercase
+removed any other unformatted words
+sorted the words
+
+build words script:
+#! /bin/bash
+
+cat hwnwdseng.htm | 
+grep -E '<td>.+</td>' | 
+sed -n '1~2!p' | 
+sed 's/<[^>]*>//g' | 
+sed 's/, /\n/g; s/ /\n/g' | 
+tr '`' "'" | 
+tr [:upper:] [:lower:] | 
+sed "s/^.*[^pkm'nwlhaeiou ].*$//g" | 
+sort -ub 
+
+
+
+
+
+checking for words misspelled in English
+$ cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | \
+tr [:upper:] [:lower:] | sort -u | comm -23 - words | wc -l
+gives 39
+
+checking for words misspelled in Hawaiian 
+$ cat assign2.html | tr 'PKMNWLHAEIOU' 'pkmnwlhaeiou'| \
+tr -cs "pk\'mnwlhaeiou" '[\n*]' | sort -u | comm -23 - hwords | wc -l 
+gives 197
+
+those 2 commands into files: 
+$ cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | \
+tr [:upper:] [:lower:] | sort -u | comm -23 - words > meng.txt
+
+$ cat assign2.html | tr 'PKMNWLHAEIOU' 'pkmnwlhaeiou'| \
+tr -cs "pk\'mnwlhaeiou" '[\n*]' | sort -u | comm -23 - hwords > mhaw.txt
+
+compare the 2 files to see which misspelled words were in common
+$ comm mhaw.txt meng.txt
+
+shows that words like "no" "we" and "who" were 
+misspelled in Hawaiian but not in English while words 
+like "linux" "lau" and "hwords" were misspelled in English but not in Hawaiian
+words like "www" "ul" and "okina" were misspelled in both languages

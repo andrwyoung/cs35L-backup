@@ -1,0 +1,93 @@
+Switched into Diffutils v3.0
+$ git checkout -b quote v3.0
+
+moved patch file into folder
+then patched it
+$ patch -p1 < quote-3.0-patch.txt
+	patching file src/cmp.c
+	patching file src/diff.c
+	patching file src/diff3.c
+	patching file src/dir.c
+	patching file src/sdiff.c
+	patching file src/util.c
+
+then added some logs using given command
+$ emacs <file in question>
+C-x 4 a
+and typed: "changed back-ticks to quotes" for each file
+
+
+committed changes so that git log will be updated
+using ChangeLog as commit message
+$ git add -A
+$ git commit -F ChangeLog
+
+now it shows up on the log
+$ git log
+commit 2e8fc81cf0ce71cac02ae70412d85921edb7acbd
+Author: Andrew Fung Yong <classkwz@lnxsrv09.seas.ucla.edu>
+Date:   Mon Dec 3 19:56:10 2018 -0800
+
+    2018-12-03  Andrew Fung Yong  <classkwz@lnxsrv09.seas.ucla.edu>
+    
+        * src/util.c: changed back-ticks to quotes
+    
+        * src/sdiff.c: changed back-ticks to quotes
+    
+        * src/dir.c: changed back-ticks to quotes
+    
+        * src/diff3.c: changed back-ticks to quotes
+    
+        * src/diff.c: changed back-ticks to quotes
+    
+        * src/cmp.c: changed back-ticks to quotes
+
+
+forgot to delete quote-3.0-patch.txt
+so deleted it and committed again
+$ rm quote-3.0-patch.txt
+$ git add quote-3.0-patch.txt
+$ git commit -m "forgot to delete quote-3.0-patch.txt"
+
+
+
+generated patch
+$ git format-patch  -1 --stdout > formatted-patch.txt
+
+
+
+
+
+doing partner's now
+$ git checkout -b partner 'v3.0' 
+$ git am < ../justin-patch.txt
+$ ./bootstrap
+$ ./configure
+$ make
+$ make check
+
+checking if it works now:
+$ ./src/diff . - | grep \`
+$ ./src/diff --help \ grep \`
+yes. partner's worked
+
+$ make distdir
+yep Changelog works
+
+
+
+
+
+to do the last part, I logged out of Seasnet
+then logged back in with -Y option
+$ ssh -Y classkwz@lnxsrv09.seas.ucla.edu
+$ cd cd ~eggert/src/gnu/emacs
+$ gitk
+
+then waited for the window to open up
+then found an old one and took a screenshot
+
+
+
+
+

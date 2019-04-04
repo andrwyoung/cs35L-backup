@@ -1,0 +1,65 @@
+My partner is Justin Jeon!
+
+
+ssh into the beaglebone
+$ sudo debian@192.168.7.2
+typed in password
+
+connected to wifi using connmanctl outlined on Piazza
+connected to a mobile hotspot
+
+checked if packages for openssh
+$ dpkg --get-selections | grep openssh
+it's already installed. nice
+
+checked to see if X11 is disabled
+$ sudo vim /etc/ssh/ssh_config
+$ sudo vim /etc/ssh/sshd_config
+
+
+
+updated packages and installed xauth and xvfb
+$ sudo apt-get update
+$ sudo apt-get install xauth
+$ sudo apt-get install xvfb
+
+Installed Firefox
+$ sudo apt-get install firefox-esr-l10n-en-gb
+
+
+checked ip address
+$ ifconfig
+10.97.85.246
+
+created a key because I'm the server:
+$ ssh-keygen
+
+created an account for Justin Jeon, my partner!
+$ sudo useradd -m justin
+
+made a password for justin: "justin!"
+$ sudo passwd justin
+
+created an .ssh folder and made him owner
+$ cd /home/justin
+$ sudo mkdir .ssh
+$ sudo chown justin .ssh
+
+he ssh into my beaglebone and I to his 
+we were on the same wifi too
+$ sudo ssh andrew@10.97.85.242
+
+made sure it worked by making some directories
+and talked to each other using write command
+$ write justin
+
+downloaded xterm
+$ sudo apt-get install xterm
+
+xterm without -X or -Y gives error
+xterm with -X brings up XQuartz
+xterm with -Y brings up XQuartz
+
+
+
+

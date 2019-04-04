@@ -1,0 +1,16 @@
+Q3) Index error is raised because the random.choice 
+function expects a non-zero number
+Since the inputted file has no lines, 
+zero was inputted into the random.choice function
+thus giving the error
+
+Q4) Python 3 gives a syntax error because 
+Python 3 doesn't let you iterate over the 
+parameters given to the exceptions.
+instead a non-tuple argument can be given and 
+then read later
+
+Example:
+
+except IOError as err:
+   errno, strerror = err.args

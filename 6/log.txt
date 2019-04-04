@@ -1,0 +1,36 @@
+tested to see if the sort was up to date
+$ /usr/local/cs/bin/sort --version
+
+generate the different 2^24 random floats
+remove od formatting
+and make newlines for each float
+put all that into rand.txt file
+$ od -f -N $((1<<24)) /dev/urandom | 
+sed 's/^....... *//;$d' | 
+sed 's/\s\+/\n/g' > rand.txt
+
+now to time the sort command
+$ time -p /usr/local/cs/bin/sort -g < rand.txt > /dev/null
+real 9.51
+user 49.61
+sys 0.26
+
+$ time -p /usr/local/cs/bin/sort --parallel 1 -g < rand.txt > /dev/null
+real 44.93
+user 44.84
+sys 0.09
+
+$ time -p /usr/local/cs/bin/sort --parallel 2 -g < rand.txt > /dev/null
+real 23.86
+user 45.01
+sys 0.16
+
+$ time -p /usr/local/cs/bin/sort --parallel 4 -g < rand.txt > /dev/null
+real 14.22
+user 47.50
+sys 0.18
+
+$ time -p /usr/local/cs/bin/sort --parallel 8 -g < rand.txt > /dev/null
+real 9.76
+user 49.76
+sys 0.25

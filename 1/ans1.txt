@@ -1,0 +1,56 @@
+1. man -K
+
+2. $ which mv
+	/usr/local/cs/bin/mv
+   $ which sh
+	/usr/bin/sh
+
+3. $ find /usr/local/cs/bin/?r -executable
+	pr: convert text files for printing
+	tr: translate or delete characters
+
+4. $ readlink /usr/bin/emacs
+	/etc/alternatives/emacs
+
+5. $/usr/bin/gcc --version
+	version 4.8.5
+   $ gcc --version
+	version 8.2.0   
+
+   It's different possibly because they store another version?
+
+6. u+sx: giving file owner setuid privilege and executing privileges
+   o-w: taking away writing privileges from others
+
+7. find /usr/local/cs -mtime -28 -type d
+
+8. $ which find	
+	/usr/bin/find
+   $ find /usr/bin -type l | wc -l
+	302 directories
+
+9. $ ls -lta /usr/lib64 | tail -n1
+	librom1394.so.0.3.0
+
+10. $ man locale
+	/usr/lib/locale/locale-archive
+	/usr/share/il8n/locales
+
+11. C-h a downcase
+	C-x C-l: downcase-region
+	M-l: downcast-word
+
+12. C-h k C-M-r
+	C-M-r: Searches a word backward
+    C-h k C-M-v
+	C-M-v: Scrolls the other window
+
+13. C-h k C-g
+	C-g runs the command keyboard-quit
+
+14. yank is like pasting
+    C-y yanks the thing last killed (cut)
+    M-y replaces the thing last yanked with previous kill
+
+15. dired only displays the names of the files, while ls -l outputs more information
+

@@ -1,0 +1,112 @@
+first wrote the tr2b.c
+the first problem was figuring out how main can take in arguments
+found out about argc and argv[] and learned how to use them
+
+made checks so that 
+there are 3 arguments
+arguments are same length
+
+then put them into a 2 dimensional array [length][2]
+while checking for duplicates
+first row [x][0] represents "from"
+second row [x][1] represents "to" 
+
+Also put in a warning if the thing you're replacing
+is the same thing you're replacing it with
+just a warning though...doesn't improve anything (just like me)
+
+Then implemented replacement using getchar() and putchar()
+and two while loops
+
+
+
+then wrote tr2u.c
+copied and pasted tr2b.c
+read up on how read and write are used
+
+#included <unisted.h>
+and just pretty much changed getchar() and putchar()
+to read and write
+
+
+
+
+
+
+
+
+
+made a test.txt file with a bunch of random bytes
+$ head -c 5000000 < /dev/urandom > test.txt
+
+
+to find straces for copying into file:
+$ strace ./tr2b diu naw < test.txt > out.txt
+shows there are 29 calls when doing this (counted by hand)
+
+$ strace ./tr2u diu naw < test.txt > out.txt
+shows there are many many many calls made
+had to ^C because too many
+looking at them shows all of them are read/write calls
+
+trying again but with another option
+found it when looking at the man page
+$ strace -c -o st1.txt ./tr2u diu naw < test.txt > out.txt
+took like a minute...
+still going
+oh wow. it's taking forever
+going to the bathroom
+back. might cancel it. kind of hungry
+oh wait nice, it's done
+
+looking at st1.txt shows that 10000024 calls were made
+5000000 of these were write calls and 5000002 were read
+(went to dinner here)
+
+
+
+to find straces for outputing on terminal:
+$ strace -c -o st2.txt ./tr2b diu naw < test.txt
+still 29 calls were made
+
+$ strace -c -o st3.txt ./tr2u diu naw < test.txt
+looking at st3.txt shows that 10000024 calls were made
+5000000 were write calls and 5000002 were read calls
+this shows that writing to terminal and copying to a file
+has no difference
+
+
+
+
+
+
+
+
+
+
+
+testing time:
+$ time cat test.txt | ./tr2b diu naw > out.txt
+real	0m0.005s
+user	0m0.001s
+sys	0m0.003s
+
+$ time cat test.txt | ./tr2u diu naw > out.txt
+real	0m10.495s
+user	0m1.351s
+sys	0m9.102s
+
+tr2b is much faster probably because it uses the 
+system calls every time instead of every so often
+as when using the library functions
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,114 @@
+get the file 
+$ wget https://web.cs.ucla.edu/classes/fall18/cs35L/assign/coreutils-with-bug.tar.gz
+
+unzip the file
+$ tar -xvzf coreutils-with-bug.tar.gz
+
+$ ./configure prefix=/u/eng/class/classkwz/Desktop/lab4/coreutils-with-bug/cores
+$ make && make install
+gives an error
+utimens.h:2:5: error: conflicting types for 'futimens'
+
+created patch file by copy and pasting patch into file
+$ vim patch_file
+
+patched the file
+$ patch -p0 < patch_file
+
+tried it again
+$ make install
+
+worked! failed because two of the functions were named the same
+patch fixed this problem by renamed futimens to coreutils_futimens
+
+checked the bug
+$ tmp=$(mktemp -d)
+$ cd $tmp
+$ touch -d '1918-11-11 11:00 GMT' wwi-armistice
+$ touch now
+$ sleep 1
+$ touch now1
+$ cd  ~/Desktop/lab4/coreutils-with-bug
+$ ./cores/bin/ls -lt --full-time $tmp
+-rw-r--r-- 1 classkwz class 0 1918-11-11 03:00:00.000000000 -0800 wwi-armistice
+-rw-r--r-- 1 classkwz class 0 2018-11-03 20:22:17.292947690 -0700 now1
+-rw-r--r-- 1 classkwz class 0 2018-11-03 20:22:12.257861475 -0700 now
+bug works
+
+$ gdb ./src/ls $tmp
+(gdb) info functions
+to look around for good functions too set breakpoints at
+the first pageful of functions show there's a function called 
+static int compare_mtime(V, V);
+
+(gdb) b compare_mtime
+(gdb) run -lt --full-time
+
+used
+(gdb) s
+(gdb) list
+to get the next few answers
+
+discovered that our function returns 
+cmp_mtime (a, b, xstrcoll)
+
+stepping into cmp_mtime function
+found out that it calls timespec_cmp
+stepping further into the functions shows that 
+timespec_cmp is returning the difference between
+the differences in seconds for both
+
+timespec_cmp (struct timespec a, struct timespec b)
+{
+	int diff = a.tv_sec - b.tv_sec;
+	return diff ? diff : a.tv_nsec - b.tv_nsec;
+}
+
+this may be a problem because subtracting a large number
+or large negative number may overflow and become a very large number
+(which was probably why the wwi-armistice was listed first)
+
+let's create the diff file to change timespec_cmp
+timespec_cmp is declared in timespec.h
+$ cp lib/timespec.h timespec.h
+
+changed timespec_cmp to return
+a.tv_nsec > b.tv_nsec ? 1 : a.tv_nsec < b.tv_nsec ? -1 : 0;
+so that it doesn't use any subtraction and can't overflow
+
+create the patch file
+$ diff -u lib/timespec.h timespec.h > lab4.diff
+changed timespec.h to lib/timespec.h so filepath is correct
+and added:
+* timespec_cmp made sure it doesn't overflow
+by replacing it with code that doesn't subtract
+
+applied the patch 
+$ patch -p0 < lab4.diff
+
+tested it
+$ make && make install
+$ ./cores/bin/ls -lt --full-time $tmp
+-rw-r--r-- 1 classkwz class 0 2018-11-04 14:12:09.524822229 -0800 now1
+-rw-r--r-- 1 classkwz class 0 2018-11-04 14:12:05.266749437 -0800 now
+-rw-r--r-- 1 classkwz class 0 1918-11-11 03:00:00.000000000 -0800 wwi-armistice
+yay! it works!
+
+checking SEASEnet servers now
+$ touch -d '1918-11-11 11:00 GMT' wwi-armistice
+$ TZ=UTC0 ls -lt --full-time wwi-armistice
+-rw-r--r-- 1 classkwz class 0 2054-12-17 17:28:16.000000000 +0000 wwi-armistice
+
+Looks like it thinks it's from the future
+Darn
+
+
+
+
+
+
+
+
+
+
+

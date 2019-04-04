@@ -1,0 +1,50 @@
+downloaded copies of the coreutils, 
+the coreutils.sig and the GNU ring using wget
+
+validated signature of coreutils.sig using
+$ gpg --verify --keyring ./gnu-keyring.gpg coreutils-8.29.tar.xz.sig
+
+warning showed up, because I didn't have the correct key
+
+unzipped coreutils using 
+$ tar -xvf coreutils-8.29.tar.xz
+
+went into folder
+$ cd coreutils-8.29
+
+configured makefile with directory path
+$ ./configure --prefix=/u/eng/class/classkwz/Desktop/lab3/coreutils
+
+made and make installed the file 
+$ make && make install
+
+created the patch file by copy and pasting patch into file
+$ vim patch_file
+
+patched the file 
+$ patch -p0 < patch_file
+entered in src/ls.c
+
+made file again
+$ make 
+commands:
+CC 	src/ls.o   :compile ls.o	
+CCLD 	src/dir	   :links stuff to dir
+CCLD	src/ls	   :links stuff to ls
+CCLD	src/vdir   :links stuff to vdir
+GEN	man/dir.1  :generate new man page for dir
+GEN	man/ls.1   :generate new man page for ls
+GEN	man/vdir.1 :generate new man page for vdir
+
+tested that it worked 
+$ ./src/ls -aA
+it worked, and didn't print out . or ..
+
+
+Q1) It's faster because the patch file shows that 
+an if statement was removed, therefore there's 
+less machine code so it's faster
+
+Q2) By introducing this patch, programs that read 
+file using ls -aA have to be changed to account 
+for the 2 missing lines

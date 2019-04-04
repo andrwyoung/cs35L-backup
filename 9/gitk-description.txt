@@ -1,0 +1,8 @@
+The top window are the different commits
+Interestingly, Proffesor Eggert's first commit was in 1992
+and the most recent changes were made in September
+
+The left window is the description of what the commit is
+as well as what the changes were, shown in a .diff file for each file changed.
+
+the left window is just a place to keep track of the file structure

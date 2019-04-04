@@ -1,0 +1,297 @@
+first wrote the tr2b.c
+the first problem was figuring out how main can take in arguments
+found out about argc and argv[] and learned how to use them
+
+made checks so that 
+there are 3 arguments
+arguments are same length
+
+then put them into a 2 dimensional array [length][2]
+while checking for duplicates
+first row [x][0] represents "from"
+second row [x][1] represents "to" 
+
+Also put in a warning if the thing you're replacing
+is the same thing you're replacing it with
+just a warning though...doesn't improve anything (just like me)
+
+Then implemented replacement using getchar() and putchar()
+and two while loops
+
+
+
+then wrote tr2u.c
+copied and pasted tr2b.c
+read up on how read and write are used
+
+#included <unisted.h>
+and just pretty much changed getchar() and putchar()
+to read and write
+
+
+
+
+
+
+
+
+
+made a test.txt file with a bunch of random bytes
+$ head -c 5000000 < /dev/urandom > test.txt
+
+
+to find straces for copying into file:
+$ strace ./tr2b diu naw < test.txt > out.txt
+shows there are 29 calls when doing this (counted by hand)
+
+$ strace ./tr2u diu naw < test.txt > out.txt
+shows there are many many many calls made
+had to ^C because too many
+looking at them shows all of them are read/write calls
+
+trying again but with another option
+found it when looking at the man page
+$ strace -c -o st1.txt ./tr2u diu naw < test.txt > out.txt
+took like a minute...
+still going
+oh wow. it's taking forever
+going to the bathroom
+back. might cancel it. kind of hungry
+oh wait nice, it's done
+
+looking at st1.txt shows that 10000024 calls were made
+5000000 of these were write calls and 5000002 were read
+(went to dinner here)
+
+
+
+to find straces for outputing on terminal:
+$ strace -c -o st2.txt ./tr2b diu naw < test.txt
+still 29 calls were made
+
+$ strace -c -o st3.txt ./tr2u diu naw < test.txt
+looking at st3.txt shows that 10000024 calls were made
+5000000 were write calls and 5000002 were read calls
+this shows that writing to terminal and copying to a file
+has no difference
+
+
+
+
+
+
+
+testing time:
+$ time cat test.txt | ./tr2b diu naw > out.txt
+real	0m0.005s
+user	0m0.001s
+sys	0m0.003s
+
+$ time cat test.txt | ./tr2u diu naw > out.txt
+real	0m10.495s
+user	0m1.351s
+sys	0m9.102s
+
+tr2b is much faster probably because it uses the 
+system calls every time instead of every so often
+as when using the library functions
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Testing:
+Made some test file by making random words. Around 5 lines
+$ vim test.txt
+
+$ time cat test.txt | ./sfrob
+real	0m0.007s
+user	0m0.004s
+sys	0m0.005s
+
+$ time cat test.txt | ./sfrobu
+real	0m0.009s
+user	0m0.005s
+sys	0m0.007s
+
+$ time cat test.txt | ./sfrobu -f
+real	0m0.009s
+user	0m0.005s
+sys	0m0.007s
+
+$ time cat test.txt | ./sfrobs
+real	0m0.014s
+user	0m0.009s
+sys	0m0.013s
+
+$ time cat test.txt | ./sfrobs -f
+real	0m0.013s
+user	0m0.010s
+sys	0m0.014s
+
+
+
+
+
+
+doubled the file
+$ cat test.txt >> test2.txt
+$ cat test.txt >> test2.txt
+$ time cat test2.txt | ./sfrob
+real	0m0.007s
+user	0m0.005s
+sys	0m0.006s
+
+$ time cat test2.txt | ./sfrobu
+real	0m0.010s
+user	0m0.006s
+sys	0m0.007s
+
+$ time cat test2.txt | ./sfrobu -f
+real	0m0.011s
+user	0m0.006s
+sys	0m0.007s
+
+$ time cat test2.txt | ./sfrobs
+real	0m0.013s
+user	0m0.010s
+sys	0m0.013s
+
+$ time cat test2.txt | ./sfrobs -f
+real	0m0.014s
+user	0m0.011s
+sys	0m0.014s
+
+
+
+
+
+
+
+doubled the file
+$ cat test2.txt >> test4.txt
+$ cat test2.txt >> test4.txt
+$ time cat test4.txt | ./sfrob
+real	0m0.009s
+user	0m0.005s
+sys	0m0.007s
+
+$ time cat test4.txt | ./sfrobu
+real	0m0.014s
+user	0m0.008s
+sys	0m0.009s
+
+$ time cat test4.txt | ./sfrobu -f
+real	0m0.014s
+user	0m0.007s
+sys	0m0.009s
+
+$ time cat test4.txt | ./sfrobs
+real	0m0.015s
+user	0m0.012s
+sys	0m0.013s
+
+$ time cat test4.txt | ./sfrobs -f
+real	0m0.016s
+user	0m0.013s
+sys	0m0.013s
+
+
+
+
+
+
+
+doubled the file
+$ cat test4.txt >> test8.txt
+$ cat test4.txt >> test8.txt
+$ time cat test8.txt | ./sfrob
+real	0m0.010s
+user	0m0.007s
+sys	0m0.006s
+
+$ time cat test8.txt | ./sfrobu
+real	0m0.020s
+user	0m0.010s
+sys	0m0.012s
+
+$ time cat test8.txt | ./sfrobu -f
+real	0m0.020s
+user	0m0.010s
+sys	0m0.013s
+
+$ time cat test8.txt | ./sfrobs
+real	0m0.017s
+user	0m0.014s
+sys	0m0.014s
+
+$ time cat test8.txt | ./sfrobs -f
+real	0m0.021s
+user	0m0.017s
+sys	0m0.015s
+
+
+
+
+
+
+doubled the file
+$ cat test8.txt >> test16.txt
+$ cat test8.txt >> test16.txt
+$ time cat test16.txt | ./a.out
+real	0m0.011s
+user	0m0.008s
+sys	0m0.006s
+
+$ time cat test16.txt | ./sfrobu
+real	0m0.030s
+user	0m0.015s
+sys	0m0.018s
+
+$ time cat test16.txt | ./sfrobu -f
+real	0m0.031s
+user	0m0.014s
+sys	0m0.019s
+
+$ time cat test16.txt | ./sfrobs
+real	0m0.024s
+user	0m0.019s
+sys	0m0.017s
+
+$ time cat test16.txt | ./sfrobs -f
+real	0m0.026s
+user	0m0.022s
+sys	0m0.016s
+
+did these commands a few times, but it was clear 
+that sfrobu was always a bit slower than sfrob.
+probably because, like in the lab, the system calls
+had to be called every time instead of once every so 
+often when using the library functions
+
+also adding -f always made it slightly slower.
+
+sfrobs was also much slower than the others initally
+but it's faster when having a lot of lines
+so will outdo both sfrob and sfrobu in the long run
+probably because it uses system calls more efficiently
+
+
+I estimate the relationship between input lines and
+comparisons is linear
+
+
+
+
+

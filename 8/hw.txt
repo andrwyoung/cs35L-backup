@@ -1,0 +1,22 @@
+1) Yes. The network is still secure because the bytes are all encrypted anyways
+and they would have no way of knowing what the messages sent were unless they had
+the private key (which hopefully they don't)
+
+But if they were to record keystrokes, then they could just steal my password
+and they can obtain my private key. And they would know what I'm sending to Justin
+through my Beaglebone (if they even care).
+
+Also if I was booting off a USB, and they have control of the USB, then they have
+everything, since they could just take the private (and public) keys kept in .ssh
+
+2) gpg --verify doesn't verify that I created the file since it only checks if
+the signature matches the file in question. So it doesn't protect form people tampering
+with the files
+
+the best method to verifying a PGP key is to establish a "chain of trust" between you
+and the key owner. This can be through a trusted third party source validating that 
+the file was indeed from me, or through testimony of other people.
+
+If not. some other solutions are to find out more about the key by looking at
+who signed it or try to look for a reliable source confirming the key. If nothing else
+works, you can also ask the signer to confirm the key's fingerprint 
